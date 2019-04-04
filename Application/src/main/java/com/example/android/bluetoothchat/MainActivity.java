@@ -72,6 +72,7 @@ public class MainActivity extends SampleActivityBase {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    // アプリが選択されたときに処理
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {

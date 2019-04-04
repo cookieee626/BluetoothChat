@@ -86,6 +86,7 @@ public class BluetoothChatFragment extends Fragment {
      */
     private BluetoothChatService mChatService = null;
 
+    // BluetoothAdapterを取得して、Bluetoothが使えるか確認
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
