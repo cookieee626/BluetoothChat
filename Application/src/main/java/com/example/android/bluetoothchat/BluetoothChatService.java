@@ -96,6 +96,7 @@ public class BluetoothChatService {
     /**
      * Return the current connection state.
      */
+    // 複数のプロセス（スレッド）が同時に入ることを防ぐ
     public synchronized int getState() {
         return mState;
     }
@@ -156,6 +157,8 @@ public class BluetoothChatService {
         }
 
         // Start the thread to connect with the given device
+        // 後ほど定義
+        // 接続をインスタンス化
         mConnectThread = new ConnectThread(device, secure);
         mConnectThread.start();
         // Update UI title

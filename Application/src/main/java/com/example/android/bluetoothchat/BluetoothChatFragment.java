@@ -157,6 +157,7 @@ public class BluetoothChatFragment extends Fragment {
     /**
      * Set up the UI and background operations for chat.
      */
+    // activityの定義
     private void setupChat() {
         Log.d(TAG, "setupChat()");
 
@@ -194,7 +195,9 @@ public class BluetoothChatFragment extends Fragment {
     private void ensureDiscoverable() {
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            // activityから別のactivityへ値を渡す
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
             startActivity(discoverableIntent);
         }
@@ -208,6 +211,7 @@ public class BluetoothChatFragment extends Fragment {
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+            // Totas はポップアップ的にメッセージを表示
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -326,11 +330,13 @@ public class BluetoothChatFragment extends Fragment {
         }
     };
 
+    // 結果を受け取ったときの処理を定義
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
+                    // Bluetoothのデバイスに接続
                     connectDevice(data, true);
                 }
                 break;
