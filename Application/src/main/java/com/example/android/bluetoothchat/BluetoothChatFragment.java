@@ -183,6 +183,7 @@ public class BluetoothChatFragment extends Fragment {
         });
 
         // Initialize the BluetoothChatService to perform bluetooth connections
+        // BluetoothのActivityをインスタンス化
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
@@ -280,8 +281,17 @@ public class BluetoothChatFragment extends Fragment {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
+    // HandlerクラスのOverride
+    // 別スレッドからUI部品操作を用いる際によく使われる
+    // Android はUIスレッドからでないとUI部品を操作できないという制約があるためよくHandlerが使われる
+    // また、スレッド間通信の仕組みでもある。Handlerインスタンスを生成したスレッドへ送るイベント
     private final Handler mHandler = new Handler() {
         @Override
+        // 引数のmessageクラスを扱うメソッド
+        // Handlerに送る
+        // Overrideで本アプリ用に定義
+        // 送受信はフラグで処理する
+        // どちらの場合も message で情報のやり取りを行う
         public void handleMessage(Message msg) {
             FragmentActivity activity = getActivity();
             switch (msg.what) {
@@ -304,6 +314,8 @@ public class BluetoothChatFragment extends Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
+                    // String 型のArrayAdapter
+                    // リストviewに渡される
                     mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:

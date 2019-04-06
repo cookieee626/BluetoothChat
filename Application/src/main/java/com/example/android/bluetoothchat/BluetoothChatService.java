@@ -75,6 +75,7 @@ public class BluetoothChatService {
      * @param handler A Handler to send messages back to the UI Activity
      */
     public BluetoothChatService(Context context, Handler handler) {
+        // デフォルトのローカル機器のBluetoothアダプターを取得
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mNewState = mState;
@@ -171,6 +172,8 @@ public class BluetoothChatService {
      * @param socket The BluetoothSocket on which the connection was made
      * @param device The BluetoothDevice that has been connected
      */
+    // AcceptThread　で呼ばれて ConnectedThred を開始するメソッド
+    // ここで Messaging を開始する
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice
             device, final String socketType) {
         Log.d(TAG, "connected, Socket Type:" + socketType);
@@ -198,16 +201,23 @@ public class BluetoothChatService {
         }
 
         // Start the thread to manage the connection and perform transmissions
+        // 後ほど定義
+        // スレッドをインスタンス化してBluetooth通信を開始
         mConnectedThread = new ConnectedThread(socket, socketType);
         mConnectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
+        // 接続したら、接続先のデバイス名をHandlerに渡す
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
+        // Bandle はオブジェクトの入れ物
+        // Activityの状態を保存する
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
+        // Messageに格納してHandlerに渡す
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         // Update UI title
+        // 接続先のデバイス名を表示とかそんなところだろうｄな
         updateUserInterfaceTitle();
     }
 
@@ -247,6 +257,7 @@ public class BluetoothChatService {
      * @param out The bytes to write
      * @see ConnectedThread#write(byte[])
      */
+    // 引数でmsgを受け取り、接続したデバイへメッセージを出力
     public void write(byte[] out) {
         // Create temporary object
         ConnectedThread r;
@@ -262,6 +273,11 @@ public class BluetoothChatService {
     /**
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
+    // Faild と Lost はメッセージが違うだけで操作は同じ
+    // Handler からメッセージを取得
+    // バンドルをいんスタンス化
+    // Message へ渡して
+    // Handler へ渡す
     private void connectionFailed() {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
@@ -302,11 +318,14 @@ public class BluetoothChatService {
      * like a server-side client. It runs until a connection is accepted
      * (or until cancelled).
      */
+    // 内向きの通信がListenされている間実行されるスレッド
+    // サーバーサイドとして振る舞う
     private class AcceptThread extends Thread {
         // The local server socket
         private final BluetoothServerSocket mmServerSocket;
         private String mSocketType;
 
+        // サーバーサイドの振る舞い
         public AcceptThread(boolean secure) {
             BluetoothServerSocket tmp = null;
             mSocketType = secure ? "Secure" : "Insecure";
@@ -314,9 +333,17 @@ public class BluetoothChatService {
             // Create a new listening server socket
             try {
                 if (secure) {
+                    // Listeningを生成
+                    // listen は通信機能を持つSWが外部からのアクセスに備えて待機する
+                    // UUIDを指定してBluetooth機器をlisten
+                    // 認証機能を使う
+                    // 暗号化通信
                     tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
                             MY_UUID_SECURE);
                 } else {
+                    // Listeningを生成
+                    // 認証を要求しない
+                    // 非暗号化通信
                     tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
                             NAME_INSECURE, MY_UUID_INSECURE);
                 }
@@ -327,6 +354,7 @@ public class BluetoothChatService {
             mState = STATE_LISTEN;
         }
 
+        // 実行
         public void run() {
             Log.d(TAG, "Socket Type: " + mSocketType +
                     "BEGIN mAcceptThread" + this);
@@ -352,6 +380,7 @@ public class BluetoothChatService {
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
                                 // Situation normal. Start the connected thread.
+                                // 上で定義したメソッドでメッセーじのやり取り
                                 connected(socket, socket.getRemoteDevice(),
                                         mSocketType);
                                 break;
@@ -388,6 +417,7 @@ public class BluetoothChatService {
      * with a device. It runs straight through; the connection either
      * succeeds or fails.
      */
+    // 外への接続をTryするスレッド
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
@@ -402,6 +432,7 @@ public class BluetoothChatService {
             // given BluetoothDevice
             try {
                 if (secure) {
+                    // 接続を待機する
                     tmp = device.createRfcommSocketToServiceRecord(
                             MY_UUID_SECURE);
                 } else {
@@ -461,6 +492,8 @@ public class BluetoothChatService {
      * This thread runs during a connection with a remote device.
      * It handles all incoming and outgoing transmissions.
      */
+    // 外のデバイスと接続中に実行されるスレッド
+    // 内向きと外向きの通信をHandleする
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
@@ -497,6 +530,7 @@ public class BluetoothChatService {
                     bytes = mmInStream.read(buffer);
 
                     // Send the obtained bytes to the UI Activity
+                    // Handlerに渡してUI activityへ反映
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
                 } catch (IOException e) {
@@ -517,6 +551,7 @@ public class BluetoothChatService {
                 mmOutStream.write(buffer);
 
                 // Share the sent message back to the UI Activity
+                // 送ったメッセージを自分のデバイスのUIへ反映
                 mHandler.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)
                         .sendToTarget();
             } catch (IOException e) {

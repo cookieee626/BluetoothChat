@@ -39,8 +39,13 @@
       <file leaf-file-name="BluetoothChatFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothchat/BluetoothChatFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="569">
-              <caret line="396" column="38" selection-start-line="396" selection-start-column="16" selection-end-line="396" selection-end-column="38" />
+            <state relative-caret-position="839">
+              <caret line="336" column="25" selection-start-line="336" selection-start-column="25" selection-end-line="336" selection-end-column="25" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#9406#11843#0" expanded="true" />
+                <element signature="e#11842#11843#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -48,8 +53,8 @@
       <file leaf-file-name="BluetoothChatService.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothchat/BluetoothChatService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-661">
-              <caret line="249" column="16" lean-forward="true" selection-start-line="249" selection-start-column="16" selection-end-line="249" selection-end-column="16" />
+            <state relative-caret-position="3389">
+              <caret line="418" selection-start-line="418" selection-end-line="418" />
             </state>
           </provider>
         </entry>
@@ -64,6 +69,17 @@
       <find>REQUEST_CONNECT_DEVICE_INSECURE</find>
       <find>startActivityForResult</find>
       <find>ConnectThread</find>
+      <find>updateUserInterfaceTitle</find>
+      <find>BluetoothChatService</find>
+      <find>Constants</find>
+      <find>content</find>
+      <find>Message</find>
+      <find>mConversationArrayAdapter</find>
+      <find>handler</find>
+      <find>mConversationView</find>
+      <find>ConnectedThread</find>
+      <find>connected</find>
+      <find>write</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -1998,7 +2014,8 @@
       <window_info id="Captures" order="2" weight="0.25" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2037037" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2037037" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Build" order="7" weight="0.32938644" />
       <window_info anchor="right" id="Gradle" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -2006,7 +2023,6 @@
       <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -2080,15 +2096,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothchat/BluetoothChatFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="569">
-          <caret line="396" column="38" selection-start-line="396" selection-start-column="16" selection-end-line="396" selection-end-column="38" />
+        <state relative-caret-position="839">
+          <caret line="336" column="25" selection-start-line="336" selection-start-column="25" selection-end-line="336" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#9406#11843#0" expanded="true" />
+            <element signature="e#11842#11843#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothchat/BluetoothChatService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-661">
-          <caret line="249" column="16" lean-forward="true" selection-start-line="249" selection-start-column="16" selection-end-line="249" selection-end-column="16" />
+        <state relative-caret-position="3389">
+          <caret line="418" selection-start-line="418" selection-end-line="418" />
         </state>
       </provider>
     </entry>
