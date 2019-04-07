@@ -38,6 +38,8 @@ import java.util.UUID;
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
+// ここでBluetooth通信の振る舞いを定義している
+// app の根幹の部分か
 public class BluetoothChatService {
     // Debugging
     private static final String TAG = "BluetoothChatService";
