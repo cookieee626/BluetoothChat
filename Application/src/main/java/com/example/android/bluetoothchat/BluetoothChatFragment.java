@@ -86,7 +86,8 @@ public class BluetoothChatFragment extends Fragment {
      */
     private BluetoothChatService mChatService = null;
 
-    // BluetoothAdapterを取得して、Bluetoothが使えるか確認
+    // Activityのライフサイクルにおいて、Activityが生成された最初の1回だけ呼び出される
+    // BluetoothAdapterを取得して、Bluetoorhがローカルで使えるか確認
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,14 +103,21 @@ public class BluetoothChatFragment extends Fragment {
         }
     }
 
-
+    // Activityが画面に表示される直前に呼び出される
+    // 画面遷移で他から戻ってきたときにも呼ばれる
+    // Bluetoothが有効でなければ有効にするよう要求、有効になったらsetup
     @Override
     public void onStart() {
         super.onStart();
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
+            // 実行する簡単なアクションを Intent オブジェクトに記述することで
+            // 別のアプリのアクティビティを開始可能
+            // これはBluetoorhAdaperクラスのインターフェースによりアクティビティを定義
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            // 開いたアクティビティから何かしらの情報を受け取ることが可能
+            // ここに Intent を渡すことでアクティビティが開始
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
@@ -117,6 +125,7 @@ public class BluetoothChatFragment extends Fragment {
         }
     }
 
+    // Activityが破棄される直前に呼び出される
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -125,6 +134,11 @@ public class BluetoothChatFragment extends Fragment {
         }
     }
 
+    // Activityが前面きて、ユーザーとのやり取り開始になる直前に呼び出される
+    // データベースと接続する際はここで接続
+    // 本クラスでは、onStart() でBTの有効化アクティビティから戻った際にここが呼ばれる
+    // ACTION_REQUEST_ENABLEが返ったときに呼ばれる
+    // chatserviceアクティビティが開始されてないときはここで開始
     @Override
     public void onResume() {
         super.onResume();
@@ -141,12 +155,34 @@ public class BluetoothChatFragment extends Fragment {
         }
     }
 
+    // 他のアプリが前面に来て、Activityがバックグラウンドに隠れる際に呼ばれる
+    // 完全に見えなくなったわけではない。見えなくなるとonStop()が呼ばれる
+    // データベースに関して、
+    //      ここでデータを保存
+    //      DB接続を解放
+    // つまり、アプリを通じてDBに接続し続けるのは非推奨な運用
+    // 各Activityは独立して閉じた作りにする
+    // onPause()
+
+    // ホーム画面に戻ったり、アプリが見えなくなったときに呼ばれる
+    // システムの状態によってはこの呼び出しの後killされる
+    // つまり、いつでも停止可能な状態にする
+    // しかし、ここの前にkillされる可能性もあるため、データを保存するタイミングとしては不適切
+    // onStop()
+
+    // 終了状態になったActivityが再開するときに呼ばれる
+    // このあとonStart()が呼ばれる
+    // onRestart()
+
+    // Fragmentで表示するViewを作成するメソッド
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_bluetooth_chat, container, false);
     }
 
+    // Viewの作製の後に呼ばれるメソッド
+    // onCreateView() の後に呼ばれるため、ここでアクションを記述
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mConversationView = (ListView) view.findViewById(R.id.in);
@@ -162,14 +198,19 @@ public class BluetoothChatFragment extends Fragment {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
+        // 会話をリスト表示するため
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
 
+        // onViewCreatedで紐づけた要素にセット
         mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the compose field with a listener for the return key
+        // 入力をセット
+        // mWriterListerは後ほど定義される
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
         // Initialize the send button with a listener that for click events
+        // 送信ボタンのアクション定義
         mSendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Send a message using content of the edit text widget
@@ -177,13 +218,15 @@ public class BluetoothChatFragment extends Fragment {
                 if (null != view) {
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
                     String message = textView.getText().toString();
+                    // sendMessage()は後ほど定義
                     sendMessage(message);
                 }
             }
         });
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        // BluetoothのActivityをインスタンス化
+        // BlutoothChatServiceに本Fragmentのactivityを渡してインスタンス化
+        // mHandlerは後ほど定義
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages

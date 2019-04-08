@@ -36,6 +36,9 @@ import com.example.android.common.logger.MessageOnlyLogFilter;
  * For devices with displays with a width of 720dp or greater, the sample log is always visible,
  * on other devices it's visibility is controlled by an item on the Action Bar.
  */
+// これを最初に読めばいいっぽいな
+// activity_main.xml の初期設定か
+// どうもこれに紐づけることでアプリに機能を追加するっぽい
 // ここに紐付ける
 public class MainActivity extends SampleActivityBase {
 
@@ -44,21 +47,30 @@ public class MainActivity extends SampleActivityBase {
     // Whether the Log Fragment is currently shown
     private boolean mLogShown;
 
+    // フラグメントの生成
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
+            // フラグメントの管理はFragmentManagerで行う
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            // BluetoothChatFragment はオーバーライドで定義されているフラグメント
             BluetoothChatFragment fragment = new BluetoothChatFragment();
+            // Rはリソースidを管理するクラス
+            // sample_content_fragment は activity_main.xml の中のフレームレイアウトのid
             transaction.replace(R.id.sample_content_fragment, fragment);
+            // transactionのコミットで反映
             transaction.commit();
         }
     }
 
+    // メニューをActivity上に設置
+    // 最初だけ呼ばれる
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // '.'はディレクトリ構造で定義される->res/menu/main
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
